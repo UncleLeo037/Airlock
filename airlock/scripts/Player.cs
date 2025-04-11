@@ -60,15 +60,18 @@ public partial class Player : CharacterBody3D
 		// Get the input direction and handle the movement/deceleration.
 		Vector2 inputDir = Input.GetVector("left", "right", "ahead", "back");
 		Vector3 direction = (_head.Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
+
+		float speed = ((inputDir.Y < 0) && Input.IsActionPressed("sprint")) ? SPEED * 1.9f : SPEED;
+
 		if (direction != Vector3.Zero)
 		{
-			velocity.X = direction.X * SPEED;
-			velocity.Z = direction.Z * SPEED;
+			velocity.X = direction.X * speed;
+			velocity.Z = direction.Z * speed;
 		}
 		else
 		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, SPEED);
-			velocity.Z = Mathf.MoveToward(Velocity.Z, 0, SPEED);
+			velocity.X = Mathf.MoveToward(Velocity.X, 0, speed);
+			velocity.Z = Mathf.MoveToward(Velocity.Z, 0, speed);
 		}
 		Velocity = velocity;
 
