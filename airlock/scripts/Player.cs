@@ -7,7 +7,7 @@ public partial class Player : CharacterBody3D
 	public const float WALK_SPEED = 5.0f;
 	public const float RUN_SPEED = 10.0f;
 	public const float JUMP_VELOCITY = 4.5f;
-	public const float SENSITIVITY = 0.1f;
+	public const float SENSITIVITY = 0.08f;
 
 	//bob variables
 	const float BOB_FREQ = 2.0f;
@@ -29,16 +29,14 @@ public partial class Player : CharacterBody3D
 	//handles Look controls
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is not InputEventMouseMotion motion) return;
+		if (@event is InputEventMouseMotion motion){
+			_head.RotateY(Mathf.DegToRad(-motion.Relative.X * SENSITIVITY));
+			_view.RotateX(Mathf.DegToRad(-motion.Relative.Y * SENSITIVITY));
+		}
 
-		_head.RotateY(Mathf.DegToRad(-motion.Relative.X * SENSITIVITY));
-		float change = -motion.Relative.Y * SENSITIVITY;
-
-		if (!((change + _cameraAngle) < 90F) || !((change + _cameraAngle) > -90F)) return;
-		
-		_view.RotateX(Mathf.DegToRad(change));
-		_cameraAngle += change;
-
+		Vector3 rotate = _view.Rotation;
+		rotate.X = Mathf.Clamp(rotate.X, Mathf.DegToRad(-90f), Mathf.DegToRad(90f));
+		_view.Rotation = rotate;
 	}
 
 	public override void _PhysicsProcess(double delta)
