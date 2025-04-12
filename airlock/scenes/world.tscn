@@ -1,8 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://b20hiaqqrvsuq"]
+[gd_scene load_steps=7 format=3 uid="uid://b20hiaqqrvsuq"]
 
 [ext_resource type="Texture2D" uid="uid://cxahfebnjw0k4" path="res://textures/panorama6.jpg" id="1_4wyf3"]
-[ext_resource type="PackedScene" uid="uid://djw0bh7vhk3dw" path="res://scenes/player.tscn" id="1_nnsk1"]
-[ext_resource type="Texture2D" uid="uid://cqyycsq4cij2e" path="res://textures/metal_0069_ao_1k.jpg" id="2_rwgxs"]
+[ext_resource type="Script" uid="uid://cg0iu1v4ktn03" path="res://scenes/world.gd" id="1_k0juu"]
+[ext_resource type="PackedScene" uid="uid://uwqiicmtcwpg" path="res://models/Environment.glb" id="3_4wyf3"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_rwgxs"]
 panorama = ExtResource("1_4wyf3")
@@ -16,35 +16,62 @@ sky = SubResource("Sky_4wyf3")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4wyf3"]
-albedo_texture = ExtResource("2_rwgxs")
-uv1_scale = Vector3(2, 2, 2)
-uv1_triplanar = true
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_nnsk1"]
-lightmap_size_hint = Vector2i(12, 12)
-material = SubResource("StandardMaterial3D_4wyf3")
-
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_nnsk1"]
-data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
-
 [node name="World" type="Node3D"]
+script = ExtResource("1_k0juu")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_4wyf3")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+light_energy = 0.03
 shadow_enabled = true
 
-[node name="Player" parent="." instance=ExtResource("1_nnsk1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="Environment" parent="." instance=ExtResource("3_4wyf3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
 
-[node name="Floor" type="MeshInstance3D" parent="."]
-transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
-mesh = SubResource("PlaneMesh_nnsk1")
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor"]
+[node name="MainMenu" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 441.0
+offset_top = 224.0
+offset_right = -441.0
+offset_bottom = -224.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D"]
-shape = SubResource("ConcavePolygonShape3D_nnsk1")
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MainMenu"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HostButton" type="Button" parent="CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="AddressEntry" type="LineEdit" parent="CanvasLayer/MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Enter Address to Join Here"
+alignment = 1
+
+[connection signal="pressed" from="CanvasLayer/MainMenu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainMenu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
