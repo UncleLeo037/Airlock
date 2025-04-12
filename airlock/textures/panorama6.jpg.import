@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b5oap5kmw58mw"
-path.s3tc="res://.godot/imported/Cartoon_green_texture_grass.jpg-033d3e9b7cc6ada3334a38e8360a66dd.s3tc.ctex"
+uid="uid://cxahfebnjw0k4"
+path.s3tc="res://.godot/imported/panorama6.jpg-cf2297eeac2d693711aba3f3594d0c7f.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://textures/Cartoon_green_texture_grass.jpg"
-dest_files=["res://.godot/imported/Cartoon_green_texture_grass.jpg-033d3e9b7cc6ada3334a38e8360a66dd.s3tc.ctex"]
+source_file="res://textures/panorama6.jpg"
+dest_files=["res://.godot/imported/panorama6.jpg-cf2297eeac2d693711aba3f3594d0c7f.s3tc.ctex"]
 
 [params]
 

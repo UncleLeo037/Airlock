@@ -3,14 +3,9 @@ using System;
 
 public partial class Player : CharacterBody3D
 {
-	public const float SPEED = 5.0f;
+	public const float WALK_SPEED = 5.0f;
 	public const float JUMP_VELOCITY = 4.5f;
 	public const float SENSITIVITY = 0.08f;
-
-	//bob variables
-	const float BOB_FREQ = 2.4f;
-	const float BOB_AMP = 0.08f;
-	double tBob = 0.0d;
 
 	private Node3D _head;
 	private Camera3D _view;
@@ -61,7 +56,7 @@ public partial class Player : CharacterBody3D
 		Vector2 inputDir = Input.GetVector("left", "right", "ahead", "back");
 		Vector3 direction = (_head.Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
 
-		float speed = ((inputDir.Y < 0) && Input.IsActionPressed("sprint")) ? SPEED * 1.9f : SPEED;
+		float speed = ((inputDir.Y < 0) && Input.IsActionPressed("sprint")) ? WALK_SPEED * 1.9f : WALK_SPEED;
 
 		if (direction != Vector3.Zero)
 		{
