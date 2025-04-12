@@ -10,16 +10,28 @@ public partial class Player : CharacterBody3D
 	private Node3D _head;
 	private Camera3D _view;
 
+    public override void _EnterTree()
+    {
+        SetMultiplayerAuthority(Int32.Parse(Name));
+    }
+
+
 	//sets up mouse and camera
 	public override void _Ready()
 	{
+		if (!IsMultiplayerAuthority()) return;
+
 		Input.MouseMode = Input.MouseModeEnum.Captured;
 		_head = GetNode<Node3D>("Head");
 		_view = GetNode<Camera3D>("Head/View");
+
+		_view.Current = true;
 	}
 	
 	public override void _Input(InputEvent @event)
 	{
+		if (!IsMultiplayerAuthority()) return;
+
 		//handles mouse look
 		if (@event is InputEventMouseMotion motion){
 			_head.RotateY(Mathf.DegToRad(-motion.Relative.X * SENSITIVITY));
@@ -31,13 +43,15 @@ public partial class Player : CharacterBody3D
 		}
 
 		//reactivates mouse
-		else if (@event is InputEventKey key && key.Keycode == Key.Escape) {
-			Input.MouseMode = Input.MouseModeEnum.Visible;
-		}
+		//else if (@event is InputEventKey key && key.Keycode == Key.Escape) {
+		//	Input.MouseMode = Input.MouseModeEnum.Visible;
+		//}
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (!IsMultiplayerAuthority()) return;
+
 		Vector3 velocity = Velocity;
 
 		// Add the gravity.

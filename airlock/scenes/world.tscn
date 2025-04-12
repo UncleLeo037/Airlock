@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b20hiaqqrvsuq"]
 
 [ext_resource type="Texture2D" uid="uid://cxahfebnjw0k4" path="res://textures/panorama6.jpg" id="1_4wyf3"]
-[ext_resource type="Script" uid="uid://cg0iu1v4ktn03" path="res://scenes/world.gd" id="1_k0juu"]
+[ext_resource type="Script" uid="uid://cg0iu1v4ktn03" path="res://scripts/world.gd" id="1_k0juu"]
 [ext_resource type="PackedScene" uid="uid://uwqiicmtcwpg" path="res://models/Environment.glb" id="3_4wyf3"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_rwgxs"]
@@ -72,6 +72,10 @@ text = "Join"
 layout_mode = 2
 placeholder_text = "Enter Address to Join Here"
 alignment = 1
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://djw0bh7vhk3dw")
+spawn_path = NodePath("..")
 
 [connection signal="pressed" from="CanvasLayer/MainMenu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainMenu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
