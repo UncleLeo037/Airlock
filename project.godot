@@ -13,8 +13,6 @@ config_version=5
 config/name="Airlock"
 run/main_scene="uid://cwolljl8wkv2h"
 config/features=PackedStringArray("4.4", "Forward Plus")
-config/icon="res://assets/icon.svg"
-config/windows_native_icon="res://assets/icon.ico"
 
 [dotnet]
 
