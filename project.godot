@@ -18,6 +18,10 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 project/assembly_name="Airlock"
 
+[global_group]
+
+Persist=""
+
 [input]
 
 ahead={

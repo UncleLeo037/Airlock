@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 const WALK_SPEED = 5.0
 const JUMP_VELOCITY = 4.5
-const SENSITIVITY = 0.08
+@export var SENSITIVITY = 0.08
 
 signal health_changed(health_value)
 
@@ -10,6 +10,8 @@ signal health_changed(health_value)
 @onready var anim_player = $AnimationPlayer
 @onready var muzzle_flash = $"View/blaster-h3/MuzzleFlash"
 @onready var raycast = $View/RayCast3D
+
+@onready var interact_distance
 
 var health = 3
 
