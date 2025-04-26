@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://cl6unof7rc7tg"]
+
+[ext_resource type="Script" uid="uid://cpp6a6hc31aa7" path="res://scripts/character.gd" id="1_agfs1"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_dkjbp"]
+friction = 0.0
+absorbent = true
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_agfs1"]
+
+[node name="character" type="RigidBody3D"]
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+mass = 80.0
+physics_material_override = SubResource("PhysicsMaterial_dkjbp")
+script = ExtResource("1_agfs1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_dkjbp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_agfs1")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
