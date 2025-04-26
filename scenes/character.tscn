@@ -2,29 +2,29 @@
 
 [ext_resource type="Script" uid="uid://cpp6a6hc31aa7" path="res://scripts/character.gd" id="1_agfs1"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_dkjbp"]
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_agfs1"]
 friction = 0.0
-absorbent = true
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_agfs1"]
 
-[node name="character" type="RigidBody3D"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
+
+[node name="RigidBody3D" type="RigidBody3D"]
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
-mass = 80.0
-physics_material_override = SubResource("PhysicsMaterial_dkjbp")
+mass = 8.0
+physics_material_override = SubResource("PhysicsMaterial_agfs1")
+can_sleep = false
+constant_force = Vector3(0, -8, 0)
 script = ExtResource("1_agfs1")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_dkjbp")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_agfs1")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+mesh = SubResource("CapsuleMesh_dkjbp")
+skeleton = NodePath("../..")
+
+[node name="Camera3D" type="Camera3D" parent="CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)

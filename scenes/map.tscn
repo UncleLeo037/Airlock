@@ -1,8 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://du0dyypht4kod"]
+[gd_scene load_steps=11 format=3 uid="uid://du0dyypht4kod"]
 
 [ext_resource type="Texture2D" uid="uid://davtjm4jn1263" path="res://assets/panorama6.jpg" id="1_gldc4"]
 [ext_resource type="Texture2D" uid="uid://dhoexwi6kd3p1" path="res://assets/dev_tile.png" id="2_0cso3"]
-[ext_resource type="PackedScene" uid="uid://n0gxevayo88o" path="res://scenes/player.tscn" id="3_gldc4"]
+[ext_resource type="PackedScene" uid="uid://cl6unof7rc7tg" path="res://scenes/character.tscn" id="3_gldc4"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_2gnfn"]
 panorama = ExtResource("1_gldc4")
@@ -21,6 +21,8 @@ albedo_color = Color(1, 0, 1, 1)
 albedo_texture = ExtResource("2_0cso3")
 uv1_triplanar = true
 texture_filter = 0
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gldc4"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_gldc4"]
 
@@ -44,9 +46,9 @@ material = SubResource("StandardMaterial3D_4tobq")
 
 [node name="RigidBody3D" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.998833, -0.0482919, 0, 0.0482919, 0.998833, -4.91703, 2.07068, 4.21511)
-collision_layer = 2
-mass = 100.0
-angular_damp = 50.0
+disable_mode = 1
+mass = 10.0
+physics_material_override = SubResource("PhysicsMaterial_gldc4")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
 mesh = SubResource("BoxMesh_gldc4")
@@ -54,4 +56,5 @@ mesh = SubResource("BoxMesh_gldc4")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
 shape = SubResource("BoxShape3D_0cso3")
 
-[node name="CharacterBody3D" parent="." instance=ExtResource("3_gldc4")]
+[node name="character" parent="." instance=ExtResource("3_gldc4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75857, 0)
