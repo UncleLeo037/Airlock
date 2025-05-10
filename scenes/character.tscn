@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cl6unof7rc7tg"]
+[gd_scene load_steps=6 format=3 uid="uid://cl6unof7rc7tg"]
 
 [ext_resource type="Script" uid="uid://cpp6a6hc31aa7" path="res://scripts/character.gd" id="1_agfs1"]
 
@@ -8,6 +8,17 @@ friction = 0.0
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_agfs1"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_agfs1"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("CollisionShape3D:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("CollisionShape3D/Camera3D:rotation")
+properties/2/spawn = true
+properties/2/replication_mode = 1
 
 [node name="RigidBody3D" type="RigidBody3D"]
 axis_lock_angular_x = true
@@ -28,3 +39,10 @@ skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="CollisionShape3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="CollisionShape3D/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.8)
+target_position = Vector3(0, 0, -1)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_agfs1")
