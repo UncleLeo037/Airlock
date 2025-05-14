@@ -19,24 +19,20 @@ func _on_host_pressed() -> void:
 	peer.create_lobby(SteamMultiplayerPeer.LOBBY_TYPE_PUBLIC)
 	multiplayer.multiplayer_peer = peer
 	ms.spawn("res://scenes/world.tscn")
-	$Host.hide()
-	$LobbyContainer/Lobbies.hide()
-	$Refresh.hide()
+	$StartMenu.hide()
 
 func join_lobby(id):
 	peer.connect_lobby(id)
 	multiplayer.multiplayer_peer = peer
 	lobby_id = id
-	$Host.hide()
-	$LobbyContainer/Lobbies.hide()
-	$Refresh.hide()
+	$StartMenu.hide()
 
 func _on_lobby_created(connect, id):
 	if connect:
 		lobby_id = id
-		Steam.setLobbyData(lobby_id, "name", str(Steam.getPersonaName()+"'s Lobby"))
+		Steam.setLobbyData(lobby_id, "name", str(Steam.getPersonaName()+"'s Airlock Server"))
 		Steam.setLobbyJoinable(lobby_id, true)
-		#print(lobby_id)
+		print(lobby_id)
 
 func open_lobby_list():
 	Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_WORLDWIDE)
@@ -52,9 +48,10 @@ func _on_lobby_match_list(lobbies):
 		but.set_size(Vector2(100, 5))
 		but.connect("pressed", Callable(self, "join_lobby").bind(lobby))
 		
-		$LobbyContainer/Lobbies.add_child(but)
+		$StartMenu/LobbyContainer/Lobbies.add_child(but)
 
 func _on_refresh_pressed():
-	if $LobbyContainer/Lobbies.get_child_count() > 0:
-		for n in $LobbyContainer/Lobbies.get_children():
+	if $StartMenu/LobbyContainer/Lobbies.get_child_count() > 0:
+		for n in $StartMenu/LobbyContainer/Lobbies.get_children():
 			n.queue_free()
+			open_lobby_list()

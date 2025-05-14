@@ -11,7 +11,6 @@ func _ready() -> void:
 		multiplayer.peer_connected.connect(spawn)
 		multiplayer.peer_disconnected.connect(removePlayer)
 
-
 func spawnPlayer(data):
 	var p = playerScene.instantiate()
 	p.set_multiplayer_authority(data)

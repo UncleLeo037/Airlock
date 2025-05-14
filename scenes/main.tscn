@@ -1,37 +1,63 @@
 [gd_scene load_steps=3 format=3 uid="uid://fxhwlig2asgy"]
 
-[ext_resource type="Script" uid="uid://g4a0mmp7uiuc" path="res://scripts/steam.gd" id="1_elqb8"]
-[ext_resource type="Script" uid="uid://0jyldgbf7aoy" path="res://scripts/main.gd" id="1_rvslj"]
+[ext_resource type="Script" uid="uid://0jyldgbf7aoy" path="res://scripts/main.gd" id="1_0wfyh"]
+[ext_resource type="Script" uid="uid://g4a0mmp7uiuc" path="res://scripts/steam.gd" id="2_sugp2"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1_rvslj")
+script = ExtResource("1_0wfyh")
 
 [node name="Steam" type="Node" parent="."]
-script = ExtResource("1_elqb8")
-
-[node name="Host" type="Button" parent="."]
-offset_right = 129.0
-offset_bottom = 78.0
-text = "Host"
-
-[node name="Refresh" type="Button" parent="."]
-offset_left = 1.0
-offset_top = 81.0
-offset_right = 130.0
-offset_bottom = 159.0
-text = "Refresh"
+script = ExtResource("2_sugp2")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("..")
 
-[node name="LobbyContainer" type="ScrollContainer" parent="."]
-offset_left = 149.0
-offset_top = 15.0
-offset_right = 886.0
-offset_bottom = 343.0
+[node name="StartMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="Lobbies" type="VBoxContainer" parent="LobbyContainer"]
+[node name="Host" type="Button" parent="StartMenu"]
+offset_left = 15.0
+offset_top = 279.0
+offset_right = 276.0
+offset_bottom = 430.0
+text = "Host"
+
+[node name="Refresh" type="Button" parent="StartMenu"]
+offset_left = 16.0
+offset_top = 458.0
+offset_right = 270.0
+offset_bottom = 590.0
+text = "Refresh"
+
+[node name="Join" type="Button" parent="StartMenu"]
+visible = false
+layout_mode = 0
+offset_left = 690.0
+offset_top = 16.0
+offset_right = 979.0
+offset_bottom = 173.0
+text = "Join"
+
+[node name="TextEdit" type="TextEdit" parent="StartMenu"]
+visible = false
+layout_mode = 0
+offset_left = 332.0
+offset_top = 211.0
+offset_right = 980.0
+offset_bottom = 251.0
+placeholder_text = "Multiplayer password"
+
+[node name="LobbyContainer" type="ScrollContainer" parent="StartMenu"]
+offset_left = 319.0
+offset_top = 308.0
+offset_right = 1056.0
+offset_bottom = 636.0
+
+[node name="Lobbies" type="VBoxContainer" parent="StartMenu/LobbyContainer"]
 layout_mode = 2
 
-[connection signal="pressed" from="Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Refresh" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="StartMenu/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="StartMenu/Refresh" to="." method="_on_refresh_pressed"]
