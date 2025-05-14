@@ -7,20 +7,27 @@ const JUMP_VELOCITY = 6.0
 
 @onready var head : Node3D = $CollisionShape3D
 @onready var camera = $CollisionShape3D/Camera3D
+@onready var feet : RayCast3D = $CollisionShape3D/Feet
 
 func _ready() -> void:
+	if not is_multiplayer_authority(): return
+	
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.current = true
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not is_multiplayer_authority(): return
+	
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		head.rotate_y(deg_to_rad(-event.relative.x * SENSITIVITY))
 		camera.rotate_x(deg_to_rad(-event.relative.y * SENSITIVITY))
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
 
 func _physics_process(_delta: float) -> void:
+	if not is_multiplayer_authority(): return
+	
 	# Handle jump.
-	if Input.is_action_just_pressed("aloft"):
+	if Input.is_action_just_pressed("aloft") and feet.is_colliding():
 		linear_velocity.y = JUMP_VELOCITY
 
 	# Get the input direction and handle the movement/deceleration.
