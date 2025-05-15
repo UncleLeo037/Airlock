@@ -22,7 +22,6 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		if object:
-			object.set_collision_layer_value(1, true)
 			object = null
 		else:
 			interact()
@@ -41,7 +40,7 @@ func _physics_process(_delta: float) -> void:
 	# Handle jump.
 	if Input.is_action_just_pressed("aloft") and feet.is_colliding():
 		linear_velocity.y = JUMP_VELOCITY
-
+	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var input_dir := Input.get_vector("port", "starboard", "forward", "aftward")
@@ -58,14 +57,17 @@ func _physics_process(_delta: float) -> void:
 	else:
 		$HUD/prompt.hide()
 	
+	if feet.is_colliding():
+		if feet.get_collider(0) == object:
+			object = null
+	
 	if object:
 		var a = object.global_transform.origin
 		var b = lock.global_transform.origin
-		var throw = (b-a)*9
+		var throw = (b-a) * 9
 		object.set_linear_velocity(throw)
 
 func interact() -> void:
 	var cast = hands.get_collider()
 	if cast is RigidBody3D:
 		object = cast
-		object.set_collision_layer_value(1, false)

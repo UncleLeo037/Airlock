@@ -9,7 +9,7 @@ friction = 0.0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_3vyb7"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_3vyb7"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_agfs1"]
 properties/0/path = NodePath(".:position")
@@ -36,7 +36,6 @@ script = ExtResource("1_g2els")
 shape = SubResource("CapsuleShape3D_agfs1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
-visible = false
 mesh = SubResource("CapsuleMesh_dkjbp")
 skeleton = NodePath("../..")
 
@@ -50,8 +49,10 @@ target_position = Vector3(0, 0, -2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
 [node name="Feet" type="ShapeCast3D" parent="CollisionShape3D"]
-shape = SubResource("SphereShape3D_3vyb7")
-target_position = Vector3(0, -0.5, 0)
+transform = Transform3D(0.9, 0, 0, 0, 0.1, 0, 0, 0, 0.9, 0, -0.9, 0)
+shape = SubResource("CylinderShape3D_3vyb7")
+target_position = Vector3(0, 0, 0)
+collision_mask = 2
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
