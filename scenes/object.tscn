@@ -69,8 +69,9 @@ properties/1/replication_mode = 1
 
 [node name="RigidBody3D" type="RigidBody3D" parent="."]
 collision_layer = 3
+collision_mask = 3
 mass = 10.0
-angular_velocity = Vector3(0.174533, 0.174533, 0.174533)
+linear_damp = 10.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
 mesh = SubResource("BoxMesh_pkda2")
@@ -81,10 +82,7 @@ shape = SubResource("BoxShape3D_cbfvs")
 [node name="blasters" type="RigidBody3D" parent="."]
 visible = false
 collision_layer = 3
-
-[node name="RayCast3D" type="RayCast3D" parent="blasters"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.069, 0)
-target_position = Vector3(0, 0, -10)
+collision_mask = 3
 
 [node name="blaster-n" type="MeshInstance3D" parent="blasters"]
 mesh = SubResource("ArrayMesh_cbfvs")

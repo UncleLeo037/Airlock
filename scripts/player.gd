@@ -7,9 +7,9 @@ const JUMP_VELOCITY = 6.0
 
 @onready var head : Node3D = $CollisionShape3D
 @onready var camera = $CollisionShape3D/Camera3D
-@onready var feet : ShapeCast3D = $CollisionShape3D/Feet
-@onready var hands : RayCast3D = $CollisionShape3D/Camera3D/Hands
-@onready var lock = $CollisionShape3D/Camera3D/Hands/Lock
+@onready var shape : ShapeCast3D = $CollisionShape3D/ShapeCast3D
+@onready var ray : RayCast3D = $CollisionShape3D/Camera3D/RayCast3D
+@onready var mark = $CollisionShape3D/Camera3D/RayCast3D/Marker3D
 
 var object : CollisionObject3D
 
@@ -20,8 +20,11 @@ func _ready() -> void:
 	camera.current = true
 
 func _input(event: InputEvent) -> void:
+	if not is_multiplayer_authority(): return
+	
 	if event.is_action_pressed("interact"):
 		if object:
+			#object.set_collision_layer_value(1, true)
 			object = null
 		else:
 			interact()
@@ -37,8 +40,26 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority(): return
 	
+	if ray.get_collider() or object:
+		$HUD/prompt.show()
+	else:
+		$HUD/prompt.hide()
+	
+	if object and shape.get_collider(0) != object:
+		var a = object.global_transform.origin
+		var b = mark.global_transform.origin
+		var push = (b-a)*100/object.mass
+		#object.set_linear_velocity(push)
+		object.apply_impulse(push)
+		object.rotation.x = camera.rotation.x
+		object.rotation.y = head.rotation.y
+		object.rotation.z = 0
+	
+	#if shape.get_collider(0) == object:
+		#linear_velocity.y = 0
+	
 	# Handle jump.
-	if Input.is_action_just_pressed("aloft") and feet.is_colliding():
+	if Input.is_action_just_pressed("aloft") and shape.is_colliding():
 		linear_velocity.y = JUMP_VELOCITY
 	
 	# Get the input direction and handle the movement/deceleration.
@@ -51,23 +72,9 @@ func _physics_process(_delta: float) -> void:
 	else:
 		linear_velocity.x = move_toward(linear_velocity.x, 0, SPEED)
 		linear_velocity.z = move_toward(linear_velocity.z, 0, SPEED)
-	
-	if hands.get_collider() or object:
-		$HUD/prompt.show()
-	else:
-		$HUD/prompt.hide()
-	
-	if feet.is_colliding():
-		if feet.get_collider(0) == object:
-			object = null
-	
-	if object:
-		var a = object.global_transform.origin
-		var b = lock.global_transform.origin
-		var throw = (b-a) * 9
-		object.set_linear_velocity(throw)
 
 func interact() -> void:
-	var cast = hands.get_collider()
+	var cast = ray.get_collider()
 	if cast is RigidBody3D:
 		object = cast
+		#object.set_collision_layer_value(1, false)
