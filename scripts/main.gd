@@ -11,6 +11,14 @@ func _ready() -> void:
 	Steam.lobby_match_list.connect(_on_lobby_match_list)
 	open_lobby_list()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("escape"):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		$Button.show()
+	if event is InputEventMouseButton and not $StartMenu.is_visible_in_tree():
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		$Button.hide()
+
 func spawn_level(map):
 	var a = (load(map) as PackedScene).instantiate()
 	return a
@@ -27,8 +35,8 @@ func join_lobby(id):
 	lobby_id = id
 	$StartMenu.hide()
 
-func _on_lobby_created(connect, id):
-	if connect:
+func _on_lobby_created(connected, id):
+	if connected:
 		lobby_id = id
 		Steam.setLobbyData(lobby_id, "name", str(Steam.getPersonaName()+"'s Airlock Server"))
 		Steam.setLobbyJoinable(lobby_id, true)
@@ -55,3 +63,6 @@ func _on_refresh_pressed():
 		for n in $StartMenu/LobbyContainer/Lobbies.get_children():
 			n.queue_free()
 			open_lobby_list()
+
+func _on_button_pressed() -> void:
+	get_tree().reload_current_scene()

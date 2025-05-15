@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://cl6unof7rc7tg"]
+[gd_scene load_steps=7 format=3 uid="uid://cl6unof7rc7tg"]
 
 [ext_resource type="Script" uid="uid://cpp6a6hc31aa7" path="res://scripts/player.gd" id="1_g2els"]
 
@@ -8,6 +8,8 @@ friction = 0.0
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_agfs1"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_3vyb7"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_agfs1"]
 properties/0/path = NodePath(".:position")
@@ -34,6 +36,7 @@ script = ExtResource("1_g2els")
 shape = SubResource("CapsuleShape3D_agfs1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+visible = false
 mesh = SubResource("CapsuleMesh_dkjbp")
 skeleton = NodePath("../..")
 
@@ -41,12 +44,32 @@ skeleton = NodePath("../..")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
 [node name="Hands" type="RayCast3D" parent="CollisionShape3D/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.8)
-target_position = Vector3(0, 0, -1)
+target_position = Vector3(0, 0, -2)
 
-[node name="Feet" type="RayCast3D" parent="CollisionShape3D"]
+[node name="Lock" type="Marker3D" parent="CollisionShape3D/Camera3D/Hands"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Feet" type="ShapeCast3D" parent="CollisionShape3D"]
+shape = SubResource("SphereShape3D_3vyb7")
+target_position = Vector3(0, -0.5, 0)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="prompt" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -37.0
+offset_top = -11.5
+offset_right = 37.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "E interact"
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_agfs1")
