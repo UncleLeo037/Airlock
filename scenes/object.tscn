@@ -1,7 +1,6 @@
 [gd_scene load_steps=11 format=4 uid="uid://dld18cpxikgv8"]
 
 [ext_resource type="Texture2D" uid="uid://dhoexwi6kd3p1" path="res://assets/dev_tile.png" id="1_cbfvs"]
-[ext_resource type="Texture2D" uid="uid://b15x1442xeof2" path="res://assets/Textures/colormap.png" id="1_pkda2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a0y2b"]
 albedo_color = Color(0, 1, 0, 1)
@@ -14,10 +13,13 @@ material = SubResource("StandardMaterial3D_a0y2b")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cbfvs"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_pkda2"]
+load_path = "res://.godot/imported/colormap.png-49d21229eccd54039304a31fb6c6f21a.s3tc.ctex"
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rqd7u"]
 resource_name = "colormap"
 cull_mode = 2
-albedo_texture = ExtResource("1_pkda2")
+albedo_texture = SubResource("CompressedTexture2D_pkda2")
 texture_filter = 2
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_4vjut"]
@@ -68,10 +70,10 @@ properties/1/replication_mode = 1
 [node name="Object" type="Node3D"]
 
 [node name="RigidBody3D" type="RigidBody3D" parent="."]
+visible = false
 collision_layer = 3
 collision_mask = 3
 mass = 10.0
-linear_damp = 10.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
 mesh = SubResource("BoxMesh_pkda2")
@@ -80,7 +82,6 @@ mesh = SubResource("BoxMesh_pkda2")
 shape = SubResource("BoxShape3D_cbfvs")
 
 [node name="blasters" type="RigidBody3D" parent="."]
-visible = false
 collision_layer = 3
 collision_mask = 3
 

@@ -2,7 +2,7 @@ extends MultiplayerSpawner
 
 @export var playerScene : PackedScene
 
-var players = {}
+var players : Dictionary = {}
 
 func _ready() -> void:
 	spawn_function = spawnPlayer
@@ -11,12 +11,12 @@ func _ready() -> void:
 		multiplayer.peer_connected.connect(spawn)
 		multiplayer.peer_disconnected.connect(removePlayer)
 
-func spawnPlayer(data):
-	var p = playerScene.instantiate()
+func spawnPlayer(data : int):
+	var p : RigidBody3D = playerScene.instantiate()
 	p.set_multiplayer_authority(data)
 	players[data] = p
 	return p
 
-func removePlayer(data):
+func removePlayer(data : int) -> void:
 	players[data].queue_free()
 	players.erase(data)

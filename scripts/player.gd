@@ -1,15 +1,15 @@
 extends RigidBody3D
 
-const SPEED = 5.0
-const JUMP_VELOCITY = 6.0
+const SPEED : float = 5.0
+const JUMP_VELOCITY : float = 6.0
 
-@export var SENSITIVITY = 0.08
+@export var SENSITIVITY : float = 0.08
 
 @onready var head : Node3D = $CollisionShape3D
-@onready var camera = $CollisionShape3D/Camera3D
+@onready var camera : Camera3D = $CollisionShape3D/Camera3D
 @onready var shape : ShapeCast3D = $CollisionShape3D/ShapeCast3D
 @onready var ray : RayCast3D = $CollisionShape3D/Camera3D/RayCast3D
-@onready var mark = $CollisionShape3D/Camera3D/RayCast3D/Marker3D
+@onready var mark : Marker3D = $CollisionShape3D/Camera3D/RayCast3D/Marker3D
 
 var object : CollisionObject3D
 
@@ -25,6 +25,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		if object:
 			#object.set_collision_layer_value(1, true)
+			object.linear_damp = 0
 			object = null
 		else:
 			interact()
@@ -48,18 +49,15 @@ func _physics_process(_delta: float) -> void:
 	if object and shape.get_collider(0) != object:
 		var a = object.global_transform.origin
 		var b = mark.global_transform.origin
-		var push = (b-a)*100/object.mass
+		var push = (b-a)*9
 		#object.set_linear_velocity(push)
 		object.apply_impulse(push)
 		object.rotation.x = camera.rotation.x
 		object.rotation.y = head.rotation.y
 		object.rotation.z = 0
 	
-	#if shape.get_collider(0) == object:
-		#linear_velocity.y = 0
-	
 	# Handle jump.
-	if Input.is_action_just_pressed("aloft") and shape.is_colliding():
+	if Input.is_action_just_pressed("aloft") and is_grounded():
 		linear_velocity.y = JUMP_VELOCITY
 	
 	# Get the input direction and handle the movement/deceleration.
@@ -77,4 +75,13 @@ func interact() -> void:
 	var cast = ray.get_collider()
 	if cast is RigidBody3D:
 		object = cast
+		object.linear_damp = 2
 		#object.set_collision_layer_value(1, false)
+
+func is_grounded() -> bool:
+	if shape.get_collision_count() == 1 and shape.get_collider(0) == object:
+		return false
+	elif shape.is_colliding():
+		return true
+	else:
+		return false
