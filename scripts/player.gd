@@ -41,28 +41,30 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority(): return
 	
-	if ray.get_collider() or object:
+	if ray.get_collider() is RigidBody3D:
 		$HUD/prompt.show()
 	else:
 		$HUD/prompt.hide()
 	
-	if object and shape.get_collider(0) != object:
-		var a = object.global_transform.origin
-		var b = mark.global_transform.origin
-		var push = (b-a)*9
-		#object.set_linear_velocity(push)
-		object.apply_impulse(push)
-		object.rotation.x = camera.rotation.x
-		object.rotation.y = head.rotation.y
-		object.rotation.z = 0
+	if object:
+		var a : Vector3 = object.global_transform.origin
+		var b : Vector3 = mark.global_transform.origin
+		var diff : Vector3 = (b-a)*9
+		diff = diff.clamp(-Vector3.ONE*10, Vector3.ONE*10)
+		object.linear_damp = 30 - diff.length()
+		object.apply_impulse(diff)
+		#will have to replace following with better rotation code
+		#object.rotation.x = camera.rotation.x
+		#object.rotation.y = head.rotation.y
+		#object.rotation.z = 0
 	
 	# Handle jump.
-	if Input.is_action_just_pressed("aloft") and is_grounded():
+	if Input.is_action_just_pressed("jump") and shape.is_colliding():
 		linear_velocity.y = JUMP_VELOCITY
 	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
-	var input_dir := Input.get_vector("port", "starboard", "forward", "aftward")
+	var input_dir := Input.get_vector("left", "right", "forward", "backward")
 	var direction := (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		linear_velocity.x = direction.x * SPEED
@@ -72,16 +74,7 @@ func _physics_process(_delta: float) -> void:
 		linear_velocity.z = move_toward(linear_velocity.z, 0, SPEED)
 
 func interact() -> void:
-	var cast = ray.get_collider()
+	var cast : CollisionObject3D = ray.get_collider()
 	if cast is RigidBody3D:
 		object = cast
-		object.linear_damp = 2
 		#object.set_collision_layer_value(1, false)
-
-func is_grounded() -> bool:
-	if shape.get_collision_count() == 1 and shape.get_collider(0) == object:
-		return false
-	elif shape.is_colliding():
-		return true
-	else:
-		return false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://du0dyypht4kod"]
+[gd_scene load_steps=12 format=3 uid="uid://du0dyypht4kod"]
 
 [ext_resource type="Texture2D" uid="uid://davtjm4jn1263" path="res://assets/panorama6.jpg" id="2_k0juu"]
 [ext_resource type="Texture2D" uid="uid://dhoexwi6kd3p1" path="res://assets/dev_tile.png" id="3_71j4m"]
@@ -23,6 +23,12 @@ albedo_color = Color(1, 0, 1, 1)
 albedo_texture = ExtResource("3_71j4m")
 uv1_triplanar = true
 texture_filter = 0
+
+[sub_resource type="QuadMesh" id="QuadMesh_71j4m"]
+size = Vector2(10, 3)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qfnet"]
+points = PackedVector3Array(5, 1.5, 0, 5, -1.5, 0, -5, 1.5, 0, -5, -1.5, 0)
 
 [node name="World" type="Node3D"]
 
@@ -57,3 +63,13 @@ playerScene = ExtResource("5_71j4m")
 
 [node name="Object" parent="." instance=ExtResource("5_qfnet")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.06264, 0, 6.38548)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(-0.0520048, 0, 0.998647, 0, 1, 0, -0.998647, 0, -0.0520048, -9.75561, 0.239917, -0.620548)
+mesh = SubResource("QuadMesh_71j4m")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.0520048, 0, 0.998647, 0, 1, 0, -0.998647, 0, -0.0520048, -9.75561, 0.239917, -0.620548)
+shape = SubResource("ConvexPolygonShape3D_qfnet")
