@@ -11,6 +11,7 @@ func _ready() -> void:
 	Steam.lobby_match_list.connect(_on_lobby_match_list)
 	open_lobby_list()
 
+#called after any Button presses
 func _unhandled_input(event : InputEvent) -> void:
 	if event.is_action_pressed("escape"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
