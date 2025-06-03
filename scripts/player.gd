@@ -12,7 +12,7 @@ const JUMP_VELOCITY : float = 5.0
 @onready var mark : Marker3D = $CollisionShape3D/Camera3D/Marker3D
 
 var object : CollisionObject3D
-var max_jitter : int = 50
+var weight : float
 
 func _ready() -> void:
 	if not is_multiplayer_authority(): return
@@ -47,8 +47,9 @@ func _physics_process(_delta: float) -> void:
 	
 	move()
 	
+	#calls object manipulation function if holding object
 	if object:
-		force()
+		manipulate()
 
 
 func move() -> void:
@@ -69,8 +70,8 @@ func move() -> void:
 		linear_velocity.z = move_toward(linear_velocity.z, 0, SPEED)
 
 
-func force() -> void:
-	if head.global_transform.origin.distance_to(object.global_transform.origin) > object.mass:
+func manipulate() -> void:
+	if head.global_transform.origin.distance_to(object.global_transform.origin) > 3:
 			interact()
 	else:
 		var a : Vector3 = object.global_transform.origin
@@ -89,10 +90,8 @@ func force() -> void:
 
 func interact() -> void:
 	if object:
-		#object.set_collision_layer_value(1, true)
 		object.linear_damp = 0
 		object = null
 	elif ray.get_collider() is RigidBody3D:
 		var cast : CollisionObject3D = ray.get_collider()
 		object = cast
-		#object.set_collision_layer_value(1, false)
