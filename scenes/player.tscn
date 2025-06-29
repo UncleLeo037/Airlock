@@ -1,40 +1,109 @@
-[gd_scene load_steps=6 format=3 uid="uid://cl6unof7rc7tg"]
+[gd_scene load_steps=5 format=3 uid="uid://4apqf4scie4p"]
 
-[ext_resource type="Script" uid="uid://cpp6a6hc31aa7" path="res://scripts/player.gd" id="1_g2els"]
+[sub_resource type="GDScript" id="GDScript_u8vuu"]
+resource_name = "player"
+script/source = "extends CharacterBody3D;
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_agfs1"]
-friction = 0.0
+const SPEED : float = 5.0;
+const JUMP_VELOCITY : float = 5.0;
+const SENSITIVITY : float = 0.08;
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_agfs1"]
+@onready var head : CollisionShape3D = $CollisionShape3D;
+@onready var camera : Camera3D = $CollisionShape3D/Camera3D;
+@onready var ray : RayCast3D = $CollisionShape3D/Camera3D/RayCast3D;
+@onready var mark : Marker3D = $CollisionShape3D/Camera3D/Marker3D;
+@onready var shape : RayCast3D = $RayCast3D;
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_dkjbp"]
+var object : CollisionObject3D;
+var weight : float;
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_agfs1"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath("CollisionShape3D:rotation")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath("CollisionShape3D/Camera3D:rotation")
-properties/2/spawn = true
-properties/2/replication_mode = 1
+func _ready() -> void:
+	if not is_multiplayer_authority(): return;
+	
+	#mouse mode is being used like bool for if player is controlable or in menu
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED;
+	camera.current = true;
+	
+func _unhandled_input(event: InputEvent) -> void:
+	if not is_multiplayer_authority(): return;
+	
+	if event.is_action_pressed(\"interact\"):
+		interact();
+	
+	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		head.rotate_y(deg_to_rad(-event.relative.x * SENSITIVITY));
+		camera.rotate_x(deg_to_rad(-event.relative.y * SENSITIVITY));
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90));
 
-[node name="Player" type="RigidBody3D"]
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
-mass = 8.0
-physics_material_override = SubResource("PhysicsMaterial_agfs1")
-script = ExtResource("1_g2els")
+func _physics_process(delta: float) -> void:
+	if not is_multiplayer_authority(): return;
+	
+	if ray.get_collider() is RigidBody3D:
+		$HUD/Label.show();
+	else:
+		$HUD/Label.hide();
+	
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta;
+
+	# Handle jump.
+	if Input.is_action_just_pressed(\"jump\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY;
+
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var input_dir := Input.get_vector(\"left\", \"right\", \"forward\", \"backward\");
+	var direction := (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized();
+	if direction and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		velocity.x = direction.x * SPEED;
+		velocity.z = direction.z * SPEED;
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED);
+		velocity.z = move_toward(velocity.z, 0, SPEED);
+	
+	move_and_slide();
+	
+	#calls object manipulation function if holding object
+	if object:
+		manipulate();
+
+func manipulate() -> void:
+	if head.global_transform.origin.distance_to(object.global_transform.origin) > 3:
+			interact();
+	else:
+		var a : Vector3 = object.global_transform.origin;
+		var b : Vector3 = mark.global_transform.origin;
+		var diff : Vector3 = (b-a)*10#*object.mass #adjust the multiplier here
+		diff = diff.clamp(-Vector3.ONE*10, Vector3.ONE*10);
+		object.linear_damp = 30 - diff.length();
+		if shape.get_collider() == object:
+			diff.y = 0;
+		object.apply_impulse(diff);
+
+func interact() -> void:
+	if object:
+		object.linear_damp = 0;
+		object = null;
+	elif ray.get_collider() is RigidBody3D:
+		var cast : CollisionObject3D = ray.get_collider();
+		object = cast;
+"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u8vuu"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_3vyb7"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_u8vuu"]
+
+[node name="CharacterBody3D" type="CharacterBody3D"]
+script = SubResource("GDScript_u8vuu")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_agfs1")
+shape = SubResource("CapsuleShape3D_u8vuu")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
-visible = false
-mesh = SubResource("CapsuleMesh_dkjbp")
-skeleton = NodePath("../..")
+mesh = SubResource("CapsuleMesh_3vyb7")
 
 [node name="Camera3D" type="Camera3D" parent="CollisionShape3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
@@ -45,52 +114,27 @@ target_position = Vector3(0, 0, -2)
 [node name="Marker3D" type="Marker3D" parent="CollisionShape3D/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="Array" type="Node3D" parent="CollisionShape3D"]
-
-[node name="NN" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, -0.5, 0)
-
-[node name="NE" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, 0.5, 0.5, 0, -0.5, 0)
-
-[node name="EE" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(-4.37114e-08, -0.707107, -0.707107, 0, 0.707107, -0.707107, 1, -3.09086e-08, -3.09086e-08, 0, -0.5, 0)
-
-[node name="SE" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(-0.707107, -0.5, -0.5, 0, 0.707107, -0.707107, 0.707107, -0.5, -0.5, 0, -0.5, 0)
-
-[node name="SS" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(-1, 6.18172e-08, 6.18172e-08, 0, 0.707107, -0.707107, -8.74228e-08, -0.707107, -0.707107, 0, -0.5, 0)
-
-[node name="SW" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(-0.707107, 0.5, 0.5, 0, 0.707107, -0.707107, -0.707107, -0.5, -0.5, 0, -0.5, 0)
-
-[node name="WW" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(1.19249e-08, 0.707107, 0.707107, 0, 0.707107, -0.707107, -1, 8.43216e-09, 8.43216e-09, 0, -0.5, 0)
-
-[node name="NW" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(0.707107, 0.5, 0.5, 0, 0.707107, -0.707107, -0.707107, 0.5, 0.5, 0, -0.5, 0)
-
-[node name="Down" type="RayCast3D" parent="CollisionShape3D/Array"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_u8vuu")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="prompt" type="Label" parent="HUD"]
+[node name="Label" type="Label" parent="HUD"]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -37.0
+offset_left = -20.0
 offset_top = -11.5
-offset_right = 37.0
+offset_right = 20.0
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 text = "E interact"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_agfs1")
+[node name="RayCast3D" type="RayCast3D" parent="."]

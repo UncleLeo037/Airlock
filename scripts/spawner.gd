@@ -12,7 +12,7 @@ func _ready() -> void:
 		multiplayer.peer_disconnected.connect(removePlayer)
 
 func spawnPlayer(data : int):
-	var p : RigidBody3D = playerScene.instantiate()
+	var p : CharacterBody3D = playerScene.instantiate()
 	p.set_multiplayer_authority(data)
 	players[data] = p
 	return p
