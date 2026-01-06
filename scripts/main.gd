@@ -20,9 +20,9 @@ func _unhandled_input(event : InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		$Button.hide()
 
-func spawn_level(map : String):
-	var a : Node3D = (load(map) as PackedScene).instantiate()
-	return a
+func spawn_level(path : String):
+	var level : Node3D = (load(path) as PackedScene).instantiate()
+	return level
 
 func _on_host_pressed() -> void:
 	peer.create_lobby(SteamMultiplayerPeer.LOBBY_TYPE_PUBLIC)
